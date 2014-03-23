@@ -1,4 +1,4 @@
 use Dancer;
 use Openponies;
 
-dance;
+dance();
