@@ -1,5 +1,8 @@
 package Openponies::Entity::Pony;
 
+use warnings;
+use strict;
+
 use DateTime;
 use DateTime::Format::MySQL;
 

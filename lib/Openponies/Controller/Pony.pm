@@ -1,9 +1,15 @@
 package Openponies::Controller::Pony;
 
-sub new {
-    my $class = shift;
+use warnings;
+use strict;
 
-    my $self = {};
+sub new {
+    my $class   = shift;
+    my $factory = shift;
+
+    my $self = {
+        factory => $factory
+    };
 
     bless  $self, $class;
     return $self;

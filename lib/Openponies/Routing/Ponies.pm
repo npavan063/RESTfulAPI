@@ -8,10 +8,9 @@ use Openponies::Entity::Pony::Factory;
 use Openponies::Controller::Pony;
 
 my $dbhandle   = database();
-#my $gateway    = Openponies::Entity::Pony::Gateway->new($dbhandle);
-#my $factory    = Openponies::Entity::Pony::Factory->new($gateway);
-#my $controller = Openponies::Controller::Pony->new($factory);
-my $controller = Openponies::Controller::Pony->new();
+my $gateway    = Openponies::Entity::Pony::Gateway->new($dbhandle);
+my $factory    = Openponies::Entity::Pony::Factory->new($gateway);
+my $controller = Openponies::Controller::Pony->new($factory);
 
 prefix '/pony';
 
