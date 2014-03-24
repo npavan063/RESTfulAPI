@@ -6,6 +6,8 @@ use strict;
 use DateTime;
 use DateTime::Format::MySQL;
 
+use Data::Dumper;
+
 my %data = (
     id             => '1',
     appearance     => '1',
@@ -20,10 +22,10 @@ my %data = (
 
 sub new {
     my $class = shift;
+    my $data  = shift;
 
-    croak "Illegal parameter list has odd number of values" if @_ % 2;
-
-    my %vars  = @_;
+    my $self = {};
+    my %vars = %{$data};
 
     foreach my $key (keys %vars) {
         # We only want to assign keys that exist
@@ -39,31 +41,45 @@ sub new {
 }
 
 sub getId {
+    my $self = shift;
+
     return $self->{id};
 }
 
 sub getAppearance {
+    my $self = shift;
+
     return $self->{appearance};
 }
 
 sub getDescription {
+    my $self = shift;
+
     return $self->{description};
 }
 
 sub getGender {
+    my $self = shift;
+
     return $self->{gender};
 }
 
 sub getName {
+    my $self = shift;
+
     return $self->{name};
 }
 
 sub getDtCreated {
+    my $self = shift;
+
     return $self->{dt_created};
 }
 
 sub getDtCreatedTimestamp {
-    my $dt = DateTime::Format::MySQL->format_datetime($self->{dt_created});
+    my $self = shift;
+
+    my $dt = DateTime::Format::MySQL->parse_datetime($self->{dt_created});
     return $dt->epoch();
 }
 

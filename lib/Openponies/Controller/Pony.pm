@@ -16,17 +16,43 @@ sub new {
 }
 
 sub viewPonyById {
-    my $class = shift;
-    my $id    = shift;
+    my $self = shift;
+    my $id   = shift;
 
-    return {success => $id};
+    my $pony = $self->{factory}->getPonyById($id);
+
+    if ($pony ne 0) {
+        return $self->viewPony($pony);
+    } else {
+        return { error => 'Pony not found.' };
+    }
 }
 
 sub viewPonyByName {
-    my $class = shift;
-    my $name  = shift;
+    my $self = shift;
+    my $name = shift;
 
-    return {success => $name};
+    my $pony = $self->{factory}->getPonyByName($name);
+
+    if ($pony ne 0) {
+        return $self->viewPony($pony);
+    } else {
+        return { error => 'Pony not found.' };
+    }
+}
+
+sub viewPony {
+    my $self = shift;
+    my $pony = shift;
+
+    return {
+        id          => $pony->getId(),
+        name        => $pony->getName(),
+        gender      => $pony->getGender(),
+        description => $pony->getDescription(),
+        appearance  => $pony->getAppearance(),
+        created     => $pony->getDtCreatedTimestamp()
+    };
 }
 
 1;

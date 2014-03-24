@@ -7,10 +7,13 @@ use Openponies::Entity::Pony::Gateway;
 use Openponies::Entity::Pony::Factory;
 use Openponies::Controller::Pony;
 
-my $dbhandle   = database();
-my $gateway    = Openponies::Entity::Pony::Gateway->new($dbhandle);
-my $factory    = Openponies::Entity::Pony::Factory->new($gateway);
-my $controller = Openponies::Controller::Pony->new($factory);
+use Data::UUID::MT;
+
+my $dbHandle      = database();
+my $uuidGenerator = Data::UUID::MT->new();
+my $gateway       = Openponies::Entity::Pony::Gateway->new($dbHandle, $uuidGenerator);
+my $factory       = Openponies::Entity::Pony::Factory->new($gateway);
+my $controller    = Openponies::Controller::Pony->new($factory);
 
 prefix '/pony';
 
