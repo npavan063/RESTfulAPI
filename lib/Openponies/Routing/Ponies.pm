@@ -24,7 +24,7 @@ get '/byid/:id.:format' => sub {
 
 get '/byname/:name.:format' => sub {
     my $name = params->{name};
-    return $controller->viewPonyById($name);
+    return $controller->viewPonyByName($name);
 };
 
 1;
