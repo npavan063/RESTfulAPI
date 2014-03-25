@@ -6,8 +6,6 @@ use strict;
 use Openponies::Entity::Abstract::Gateway;
 our @ISA = qw(Openponies::Entity::Abstract::Gateway);
 
-use Dancer::Exception qw(:all);
-
 sub getPonyById {
     my $self = shift;
     my $id   = shift;
