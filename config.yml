@@ -16,3 +16,7 @@ plugins:
             AutoCommit: 1
         on_connect_do: ["SET NAMES 'utf8'", "SET CHARACTER SET 'utf8'", "SET SQL_MODE='TRADITIONAL'" ]
         log_queries: 1
+    Memcached:
+        servers:
+            - "127.0.0.1:11211"
+        default_timeout: 3600

@@ -3,6 +3,9 @@ package Openponies::Entity::Abstract::Gateway;
 use warnings;
 use strict;
 
+use Dancer;
+use Dancer::Plugin::Memcached;
+
 sub new {
     my $class         = shift;
     my $dbHandle      = shift;
@@ -21,6 +24,21 @@ sub generateUUID {
     my $self = shift;
 
     return $self->{uuidGenerator}->create_string();
+}
+
+sub store_cache {
+    my $self    = shift;
+    my $key     = shift;
+    my $content = shift;
+
+    memcached_store($key, $content);
+}
+
+sub get_cache {
+    my $self = shift;
+    my $key  = shift;
+
+    return memcached_get($key);
 }
 
 1;

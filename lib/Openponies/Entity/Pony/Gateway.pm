@@ -15,7 +15,7 @@ sub getPonyById {
     my $query = $self->{dbHandle}->prepare("SELECT * FROM `ponies` WHERE `id` = ? LIMIT 1;");
     $query->execute($id);
 
-    my $data = $query->fetchrow_hashref;
+    $data = $query->fetchrow_hashref;
 
     if (defined $data) {
         return $data;
@@ -31,7 +31,7 @@ sub getPonyByName {
     my $query = $self->{dbHandle}->prepare("SELECT * FROM `ponies` WHERE `name` = ? LIMIT 1;");
     $query->execute($name);
 
-    my $data = $query->fetchrow_hashref;
+    $data = $query->fetchrow_hashref;
 
     if (defined $data) {
         return $data;
