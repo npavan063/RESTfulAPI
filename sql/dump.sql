@@ -45,7 +45,9 @@ CREATE TABLE `ponies` (
   `place_home_id` varchar(63) DEFAULT NULL,
   `place_birth_id` varchar(63) DEFAULT NULL,
   `appearance` longtext,
-  PRIMARY KEY (`id`)
+  `dt_created` datetime NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `name` (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -91,4 +93,4 @@ CREATE TABLE `users` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2014-03-24 21:28:15
+-- Dump completed on 2014-03-25  1:13:31
