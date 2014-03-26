@@ -3,6 +3,9 @@ package Openponies::Controller::Pony;
 use warnings;
 use strict;
 
+use Dancer;
+use Dancer::Plugin::REST;
+
 sub new {
     my $class   = shift;
     my $factory = shift;
@@ -24,7 +27,7 @@ sub viewPonyById {
     if ($pony ne 0) {
         return $self->viewPony($pony);
     } else {
-        return { error => 'Pony not found.' };
+        return status_not_found({ error => 'Pony not found.' });
     }
 }
 
@@ -37,7 +40,7 @@ sub viewPonyByName {
     if ($pony ne 0) {
         return $self->viewPony($pony);
     } else {
-        return { error => 'Pony not found.' };
+        return status_not_found({ error => 'Pony not found.' });
     }
 }
 
