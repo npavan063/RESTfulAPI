@@ -20,3 +20,6 @@ plugins:
         servers:
             - "127.0.0.1:11211"
         default_timeout: 3600
+    Auth::RBAC:
+        credentials:
+            class: MySQL
