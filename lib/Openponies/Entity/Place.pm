@@ -8,7 +8,8 @@ use Data::Dumper;
 my %data = (
     id             => '',
     description    => '',
-    name           => ''
+    name           => '',
+    creator_id     => ''
 );
 
 sub new {

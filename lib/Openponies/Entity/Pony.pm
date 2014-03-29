@@ -18,7 +18,7 @@ my %data = (
     place_home_id  => '',
     species_id     => '',
     dt_created     => '',
-    creator        => ''
+    creator_id     => ''
 );
 
 sub new {

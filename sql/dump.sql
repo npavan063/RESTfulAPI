@@ -25,7 +25,8 @@ DROP TABLE IF EXISTS `places`;
 CREATE TABLE `places` (
   `id` varchar(63) NOT NULL,
   `name` varchar(255) NOT NULL,
-  `description` longtext NOT NULL
+  `description` longtext NOT NULL,
+  `creator_id` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -46,6 +47,7 @@ CREATE TABLE `ponies` (
   `place_birth_id` varchar(63) DEFAULT NULL,
   `appearance` longtext,
   `dt_created` datetime NOT NULL,
+  `creator_id` varchar(255) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -62,6 +64,7 @@ CREATE TABLE `species` (
   `id` varchar(63) NOT NULL,
   `name` varchar(255) NOT NULL,
   `description` longtext NOT NULL,
+  `creator_id` varchar(255) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -95,4 +98,4 @@ CREATE TABLE `users` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2014-03-29 21:42:38
+-- Dump completed on 2014-03-29 22:32:02
