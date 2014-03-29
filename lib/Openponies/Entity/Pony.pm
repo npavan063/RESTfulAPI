@@ -17,7 +17,8 @@ my %data = (
     place_birth_id => '',
     place_home_id  => '',
     species_id     => '',
-    dt_created     => ''
+    dt_created     => '',
+    creator        => ''
 );
 
 sub new {
@@ -81,6 +82,30 @@ sub getDtCreatedTimestamp {
 
     my $dt = DateTime::Format::MySQL->parse_datetime($self->{dt_created});
     return $dt->epoch();
+}
+
+sub getSpeciesId {
+    my $self = shift;
+
+    return $self->{species_id};
+}
+
+sub getPlaceBirthId {
+    my $self = shift;
+
+    return $self->{place_birth_id};
+}
+
+sub getPlaceHomeId {
+    my $self = shift;
+
+    return $self->{place_home_id};
+}
+
+sub getCreatorId {
+    my $self = shift;
+
+    return $self->{creator_id},
 }
 
 1;

@@ -18,13 +18,15 @@ my $controller    = Openponies::Controller::Pony->new($factory);
 prefix '/pony';
 
 get '/byid/:id.:format' => sub {
-    my $id = params->{id};
-    return $controller->viewPonyById($id);
+    my $id     = params->{id};
+    my $format = params->{format};
+    return $controller->viewPonyById($id, $format);
 };
 
 get '/byname/:name.:format' => sub {
-    my $name = params->{name};
-    return $controller->viewPonyByName($name);
+    my $name   = params->{name};
+    my $format = params->{format};
+    return $controller->viewPonyByName($name, $format);
 };
 
 1;

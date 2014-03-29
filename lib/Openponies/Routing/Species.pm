@@ -18,8 +18,10 @@ my $controller    = Openponies::Controller::Species->new($factory);
 prefix '/species';
 
 get '/:id.:format' => sub {
-    my $id = params->{id};
-    return $controller->viewSpeciesById($id);
+    my $id     = params->{id};
+    my $format = params->{format};
+
+    return $controller->viewSpeciesById($id, $format);
 };
 
 1;

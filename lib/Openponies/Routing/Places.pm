@@ -18,8 +18,10 @@ my $controller    = Openponies::Controller::Place->new($factory);
 prefix '/place';
 
 get '/:id.:format' => sub {
-    my $id = params->{id};
-    return $controller->viewPlaceById($id);
+    my $id     = params->{id};
+    my $format = params->{format};
+
+    return $controller->viewPlaceById($id, $format);
 };
 
 1;
