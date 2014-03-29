@@ -6,9 +6,9 @@ use strict;
 use Data::Dumper;
 
 my %data = (
-    id             => '1',
-    description    => '1',
-    name           => '1'
+    id             => '',
+    description    => '',
+    name           => ''
 );
 
 sub new {

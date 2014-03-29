@@ -76,11 +76,13 @@ DROP TABLE IF EXISTS `users`;
 CREATE TABLE `users` (
   `id` varchar(63) NOT NULL,
   `email_address` varchar(255) NOT NULL,
-  `api_key` varchar(63) NOT NULL,
-  `username` varchar(255) NOT NULL,
-  PRIMARY KEY (`id`),
+  `login` varchar(255) NOT NULL,
+  `password` varchar(255) NOT NULL,
+  `roles` mediumtext NOT NULL,
+  `name` varchar(255) NOT NULL,
   UNIQUE KEY `unique_email` (`email_address`),
-  UNIQUE KEY `unique_username` (`username`)
+  UNIQUE KEY `login` (`login`),
+  UNIQUE KEY `unique_username` (`login`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -93,4 +95,4 @@ CREATE TABLE `users` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2014-03-25  1:13:31
+-- Dump completed on 2014-03-29 21:42:38

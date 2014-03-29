@@ -9,15 +9,15 @@ use DateTime::Format::MySQL;
 use Data::Dumper;
 
 my %data = (
-    id             => '1',
-    appearance     => '1',
-    description    => '1',
-    gender         => '1',
-    name           => '1',
-    place_birth_id => '1',
-    place_home_id  => '1',
-    species_id     => '1',
-    dt_created     => '1'
+    id             => '',
+    appearance     => '',
+    description    => '',
+    gender         => '',
+    name           => '',
+    place_birth_id => '',
+    place_home_id  => '',
+    species_id     => '',
+    dt_created     => ''
 );
 
 sub new {

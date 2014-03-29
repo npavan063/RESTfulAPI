@@ -1,14 +1,20 @@
-package Openponies::Entity::Species;
+package Openponies::Entity::User;
 
 use warnings;
 use strict;
 
+use DateTime;
+use DateTime::Format::MySQL;
+
 use Data::Dumper;
 
 my %data = (
-    id             => '',
-    description    => '',
-    name           => ''
+    id            => '',
+    login         => '',
+    password      => '',
+    email_address => '',
+    roles         => '',
+    name          => ''
 );
 
 sub new {
@@ -37,10 +43,28 @@ sub getId {
     return $self->{id};
 }
 
-sub getDescription {
+sub getUsername {
     my $self = shift;
 
-    return $self->{description};
+    return $self->{login};
+}
+
+sub getPasswordHash {
+    my $self = shift;
+
+    return $self->{password};
+}
+
+sub getEmailAddress {
+    my $self = shift;
+
+    return $self->{email_address};
+}
+
+sub getRoles {
+    my $self = shift;
+
+    return $self->{roles};
 }
 
 sub getName {
