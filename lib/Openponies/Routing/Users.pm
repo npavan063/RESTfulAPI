@@ -9,6 +9,7 @@ use Openponies::Entity::User::Factory;
 use Openponies::Controller::User;
 
 use Data::UUID::MT;
+use Data::Dumper;
 
 my $dbHandle      = database();
 my $uuidGenerator = Data::UUID::MT->new();
@@ -19,23 +20,28 @@ my $controller    = Openponies::Controller::User->new($factory);
 hook 'before' => sub {
     if (defined params->{username} && defined params->{password}) {
         var user => $controller->authenticate(params->{username}, params->{password});
-
-        if (vars->{user} == 0) {
-            request->path_info('/user/unauthorized');
-        }
     }
 };
 
 prefix '/user';
 
-get '/unauthorized' => sub {
+any '/unauthorized' => sub {
     status 'unauthorized';
     return({'error' => 'Authentication rejected - Incorrect username or password.'});
 };
 
-get '/forbidden' => sub {
+any '/forbidden' => sub {
     status 'forbidden';
     return({'error' => 'Access denied - You do not have access to that resource.'});
+};
+
+post '/register.:format' => sub {
+    my $username = param('username');
+    my $password = param('password');
+    my $email    = param('email');
+    my $format   = param('format');
+    
+    return $controller->register($username, $password, $email, $format);
 };
 
 1;
