@@ -29,4 +29,23 @@ sub getUserByAuth {
     }
 }
 
+sub createUserForRegistration {
+    my $self     = shift;
+    my $username = shift;
+    my $password = shift;
+    my $email    = shift;  
+    my $id       = $self->{gateway}->generateUUID;
+    
+    my $user = $self->create({
+        id            => $id,
+        login         => $username,
+        password      => $password,
+        email_address => $email,
+        roles         => "user",
+        name          => "Anonymous"
+    });
+    
+    return $user;
+}
+
 1;
