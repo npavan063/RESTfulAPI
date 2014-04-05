@@ -47,6 +47,6 @@ post '/register.:format' => sub {
 options '/register.:format' => sub {
     status 'ok';
     return {OK => 'OK'};
-}
+};
 
 1;
