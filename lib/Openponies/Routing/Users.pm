@@ -35,7 +35,7 @@ any '/forbidden' => sub {
     return({'error' => 'Access denied - You do not have access to that resource.'});
 };
 
-any ['post', 'options', 'head'] => '/register.:format' => sub {
+post '/register.:format' => sub {
     my $username = param('username');
     my $password = param('password');
     my $email    = param('email');
@@ -43,5 +43,10 @@ any ['post', 'options', 'head'] => '/register.:format' => sub {
     
     return $controller->register($username, $password, $email, $format);
 };
+
+options '/register.:format' => sub {
+    status 'ok';
+    return {OK => 'OK'};
+}
 
 1;
