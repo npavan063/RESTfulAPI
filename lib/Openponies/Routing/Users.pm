@@ -45,6 +45,8 @@ post '/register.:format' => sub {
 };
 
 options '/register.:format' => sub {
+    header('Access-Control-Allow-Headers' => 'content-type');
+    
     status 'ok';
     return {OK => 'OK'};
 };
