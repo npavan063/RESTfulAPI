@@ -42,4 +42,25 @@ sub viewSpecies {
     };
 }
 
+sub allSpecies {
+    my $self   = shift;
+    my $format = shift;
+    
+    my $speciesList = $self->{factory}->getAllSpecies();
+    
+    if ($speciesList ne 0) {
+        my $speciesHashref = {};
+        foreach my $species (@{$speciesList}) {
+            $speciesHashref->{$species->getId()} = {
+                id          => $species->getId(),
+                name        => $species->getName(),
+                description => $species->getDescription()
+            };
+        }
+        return $speciesHashref;
+    } else {
+        return status_not_found('Species not found.');
+    }
+}
+
 1;

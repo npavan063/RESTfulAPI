@@ -28,4 +28,22 @@ sub getSpeciesById {
     }
 }
 
+sub getAllSpecies {
+    my $self = shift;
+    
+    my $data = $self->{gateway}->getAllSpecies();
+    
+    if ($data ne 0) {
+        my @species = ();
+        
+        foreach my $row (@{$data}) {
+            push(@species, $self->create($row));
+        }
+        
+        return \@species;
+    } else {
+        return 0;
+    }
+}
+
 1;

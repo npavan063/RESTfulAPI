@@ -22,4 +22,19 @@ sub getSpeciesById {
     }
 }
 
+sub getAllSpecies {
+    my $self = shift;
+    
+    my $query = $self->{dbHandle}->prepare("SELECT * FROM `species` ORDER BY `name` ASC;");
+    $query->execute();
+    
+    my $data = $query->fetchall_arrayref({});
+    
+    if (defined $data) {
+        return $data;
+    } else {
+        return 0;
+    }
+}
+
 1;
