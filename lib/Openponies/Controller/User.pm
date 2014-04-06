@@ -7,9 +7,8 @@ use Openponies;
 
 use Dancer;
 use Dancer::Plugin::REST;
+use Dancer::Plugin::Passphrase;
 
-use Crypt::SaltedHash;
-use Digest::PBKDF2;
 use Mail::RFC822::Address qw(valid);
 
 sub new {
@@ -33,7 +32,7 @@ sub authenticate {
     my $result = $self->{factory}->getUserByAuth($username);
 
     unless ($result eq 0) {
-        if (Crypt::SaltedHash->validate($result->getPasswordHash(), $password)) {
+        if (passphrase($password)->matches($result->getPasswordHash())) {
             $user = $result;
         }
     }
@@ -56,9 +55,7 @@ sub register {
     
     return status_bad_request('E-mail address '.$email.' not valid (RFC822).') unless (valid($email));
     
-    my $csh = Crypt::SaltedHash->new(algorithm => 'PBKDF2');
-    $csh->add($password);
-    my $salted = $csh->generate;
+    my $salted = passphrase($password)->generate();
     
     my $user   = $self->{factory}->createUserForRegistration($username, $salted, $email);
     my $userId = $self->{factory}->{gateway}->registerUser($user);
