@@ -31,9 +31,6 @@ sub authenticate {
     my $user     = 0;
 
     my $result = $self->{factory}->getUserByAuth($username);
-    
-    print Dumper $result;
-    print "\n\n\n\n";
 
     unless ($result eq 0) {
         if (Crypt::SaltedHash->validate($result->getPasswordHash(), $password)) {
