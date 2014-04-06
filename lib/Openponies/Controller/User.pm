@@ -3,6 +3,8 @@ package Openponies::Controller::User;
 use warnings;
 use strict;
 
+use Openponies;
+
 use Dancer;
 use Dancer::Plugin::REST;
 
@@ -29,14 +31,23 @@ sub authenticate {
     my $user     = 0;
 
     my $result = $self->{factory}->getUserByAuth($username);
+    
+    print Dumper $result;
+    print "\n\n\n\n";
 
-    unless ($user == 0) {
+    unless ($result eq 0) {
         if (Crypt::SaltedHash->validate($result->getPasswordHash(), $password)) {
             $user = $result;
         }
     }
 
     return $user;
+}
+
+sub successfulLogin {
+    my $self = shift;
+    
+    return {'id' => vars->{user}->getId()};
 }
 
 sub register {
@@ -46,7 +57,7 @@ sub register {
     my $email    = shift;
     my $format   = shift;
     
-    return status_bad_request({error => 'E-mail address '.$email.' not valid (RFC822).'}) unless (valid($email));
+    return status_bad_request('E-mail address '.$email.' not valid (RFC822).') unless (valid($email));
     
     my $csh = Crypt::SaltedHash->new(algorithm => 'PBKDF2');
     $csh->add($password);
@@ -56,17 +67,17 @@ sub register {
     my $userId = $self->{factory}->{gateway}->registerUser($user);
     
     if ($userId eq $self->{factory}->{gateway}->ERROR_USERNAME_EXISTS) {
-        return status_bad_request({error => "Username $username already exists in database."});
+        return status_bad_request("Username $username already exists in database.");
     }
     
     if ($userId eq $self->{factory}->{gateway}->ERROR_EMAIL_EXISTS) {
-        return status_bad_request({error => "Email address $email already exists in database."});
+        return status_bad_request("Email address $email already exists in database.");
     }
     
     if ($userId ne 0) {
         return status_created({id => $userId});
     } else {
-        return status_bad_request({error => "User could not be created."});
+        return status_bad_request("User could not be created.");
     }
 }
 

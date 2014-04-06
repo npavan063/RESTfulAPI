@@ -27,7 +27,7 @@ sub viewSpeciesById {
     if ($species ne 0) {
         return $self->viewSpecies($species);
     } else {
-        return status_not_found({ error => 'Species not found.' });
+        return status_not_found('Species not found.');
     }
 }
 

@@ -27,7 +27,7 @@ sub viewPlaceById {
     if ($place ne 0) {
         return $self->viewPlace($place);
     } else {
-        return status_not_found({ error => 'Place not found.' });
+        return status_not_found('Place not found.');
     }
 }
 

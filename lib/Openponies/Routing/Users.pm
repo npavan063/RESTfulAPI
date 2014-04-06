@@ -9,7 +9,6 @@ use Openponies::Entity::User::Factory;
 use Openponies::Controller::User;
 
 use Data::UUID::MT;
-use Data::Dumper;
 
 my $dbHandle      = database();
 my $uuidGenerator = Data::UUID::MT->new();
@@ -25,14 +24,18 @@ hook 'before' => sub {
 
 prefix '/user';
 
+get '/checklogin.:format' => sub {
+    return $controller->successfulLogin() if (Openponies->checkLoggedIn() eq 1);
+};
+
 any '/unauthorized' => sub {
     status 'unauthorized';
-    return({'error' => 'Authentication rejected - Incorrect username or password.'});
+    return({error => 'Authentication rejected - Incorrect username or password.'});
 };
 
 any '/forbidden' => sub {
     status 'forbidden';
-    return({'error' => 'Access denied - You do not have access to that resource.'});
+    return({error => 'Access denied - You do not have access to that resource.'});
 };
 
 post '/register.:format' => sub {

@@ -15,9 +15,11 @@ load Openponies::Routing::Species;
 load Openponies::Routing::Users;
 
 sub checkLoggedIn {
-    if (vars->{user} == 0) {
-        request->path_info('/user/unauthorized');
+    if (vars->{user} eq 0) {
+        return forward('/user/unauthorized');
     }
+    
+    return 1;
 }
 
 1;
