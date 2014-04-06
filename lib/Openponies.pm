@@ -15,7 +15,7 @@ load Openponies::Routing::Species;
 load Openponies::Routing::Users;
 
 sub checkLoggedIn {
-    if (vars->{user} eq 0) {
+    if (vars->{user} eq 0 || !defined vars->{user}) {
         return forward('/user/unauthorized');
     }
     
