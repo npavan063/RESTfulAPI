@@ -28,4 +28,22 @@ sub getPlaceById {
     }
 }
 
+sub getAllPlaces {
+    my $self = shift;
+    
+    my $data = $self->{gateway}->getAllPlaces();
+    
+    if ($data ne 0) {
+        my @places = ();
+        
+        foreach my $row (@{$data}) {
+            push(@places, $self->create($row));
+        }
+        
+        return \@places;
+    } else {
+        return 0;
+    }
+}
+
 1;

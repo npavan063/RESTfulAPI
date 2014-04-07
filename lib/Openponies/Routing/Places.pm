@@ -24,4 +24,10 @@ get '/:id.:format' => sub {
     return $controller->viewPlaceById($id, $format);
 };
 
+get '/all/all.:format' => sub {
+    my $format = params->{format};
+    
+    return $controller->allPlaces();
+};
+
 1;

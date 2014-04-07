@@ -42,4 +42,27 @@ sub viewPlace {
     };
 }
 
+sub allPlaces {
+    my $self   = shift;
+    my $format = shift;
+    
+    my $placesList = $self->{factory}->getAllPlaces();
+    
+    if ($placesList ne 0) {
+        my $placesHashref = {};
+        
+        foreach my $place (@{$placesList}) {
+            $placesHashref->{$place->getId()} = {
+                id          => $place->getId(),
+                name        => $place->getName(),
+                description => $place->getDescription()
+            };
+        }
+        
+        return $placesHashref;
+    } else {
+        return status_not_found('Places not found.');
+    }
+}
+
 1;

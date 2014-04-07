@@ -50,6 +50,7 @@ sub allSpecies {
     
     if ($speciesList ne 0) {
         my $speciesHashref = {};
+        
         foreach my $species (@{$speciesList}) {
             $speciesHashref->{$species->getId()} = {
                 id          => $species->getId(),
@@ -57,6 +58,7 @@ sub allSpecies {
                 description => $species->getDescription()
             };
         }
+        
         return $speciesHashref;
     } else {
         return status_not_found('Species not found.');
