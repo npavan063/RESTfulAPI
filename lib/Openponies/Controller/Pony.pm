@@ -87,8 +87,30 @@ sub createPony {
     my $placeHomeId  = shift;
     my $speciesId    = shift;
     
-    return status_bad_request("That name is already taken.") if ($self->{factory}->getPonyByName($name) ne 0);
+    unless (defined $name && defined $description && defined $appearance && defined $gender && defined $placeBirthId && defined $placeHomeId && defined $speciesId &&
+            $name ne ''   && $description ne ''   && $appearance ne ''   && $gender ne ''   && $placeBirthId ne ''   && $placeHomeId ne ''   && $speciesId ne '') {
+        return status_bad_request('Must send name, description, appearance, gender, place_birth_id, place_home_id & species_id parameters.');
+    }
     
+    return status_bad_request("That name is already taken.")
+        if ($self->{factory}->getPonyByName($name) ne 0);
+    return status_bad_request("Birth place ID $placeBirthId not found.")
+        if ($self->{placeFactory}->getPlaceById($placeBirthId) eq 0);
+    return status_bad_request("Home place ID $placeHomeId not found.")
+        if ($self->{placeFactory}->getPlaceById($placeHomeId) eq 0);
+    return status_bad_request("Species ID $speciesId not found.")
+        if ($self->{speciesFactory}->getSpeciesById($speciesId) eq 0);
+    return status_bad_request("That gender is invalid.")
+        if ($gender ne "Male" && $gender ne "Female");
+    
+    my $pony   = $self->{factory}->createPonyToInsert($name, $description, $appearance, $gender, $placeBirthId, $placeHomeId, $speciesId, vars->{user}->getId());
+    my $ponyId = $self->{factory}->{gateway}->createPony($pony);
+    
+    if ($ponyId ne 0) {
+        return status_created({id => $ponyId});
+    } else {
+        return status_bad_request("Pony could not be created.");
+    }
 }
 
 1;

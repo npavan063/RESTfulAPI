@@ -53,7 +53,12 @@ sub register {
     my $email    = shift;
     my $format   = shift;
     
-    return status_bad_request('E-mail address '.$email.' not valid (RFC822).')           unless (valid($email));
+    unless (defined $username && defined $password && defined $email &&
+            $username ne ''   && $password ne ''   && $email ne '') {
+        return status_bad_request('Must send username, password & email parameters.');
+    }
+    
+    return status_bad_request("E-mail address $email not valid (RFC822).")               unless (valid($email));
     return status_bad_request('Username must be 4-60 characters and alphanumeric.')      unless ($username =~ /^[A-Za-z0-9]{4,60}$/);
     return status_bad_request('Password must be 8-100 characters and contain a number.') unless ($password =~ /^\S*(?=\S*[\d])(?=\S{8,100})\S*$/);
     

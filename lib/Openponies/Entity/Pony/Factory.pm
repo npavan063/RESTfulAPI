@@ -6,6 +6,8 @@ use strict;
 use Openponies::Entity::Abstract::Factory;
 use Openponies::Entity::Pony;
 
+use DateTime;
+
 our @ISA = qw(Openponies::Entity::Abstract::Factory);
 
 sub create {
@@ -39,6 +41,34 @@ sub getPonyByName {
     } else {
         return 0;
     }
+}
+
+sub createPonyToInsert {
+    my $self         = shift;
+    my $name         = shift;
+    my $description  = shift;
+    my $appearance   = shift;
+    my $gender       = shift;
+    my $placeBirthId = shift;
+    my $placeHomeId  = shift;
+    my $speciesId    = shift;
+    my $userId       = shift;
+    my $id           = $self->{gateway}->generateUUID;
+    
+    my $pony = $self->create({
+        id             => $id,
+        appearance     => $appearance,
+        description    => $description,
+        gender         => $gender,
+        name           => $name,
+        place_birth_id => $placeBirthId,
+        place_home_id  => $placeHomeId,
+        species_id     => $speciesId,
+        dt_created     => DateTime::Format::MySQL->format_datetime(DateTime->now()),
+        creator_id     => $userId
+    });
+    
+    return $pony;
 }
 
 1;

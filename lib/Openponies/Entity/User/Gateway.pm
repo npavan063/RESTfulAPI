@@ -48,7 +48,7 @@ sub registerUser {
                                             VALUES              (?,    ?,       ?,          ?,               ?,       ?);");
     my $result = $query->execute($user->getId(), $user->getUsername(), $user->getPasswordHash(), $user->getEmailAddress(), $user->getRoles(), $user->getName());
     
-    if ($result == 1) {
+    if ($result eq 1) {
         return $user->getId();
     } else {
         return 0;

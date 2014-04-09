@@ -38,4 +38,31 @@ sub getPonyByName {
     }
 }
 
+sub createPony {
+    my $self = shift;
+    my $pony = shift;
+    
+    my $query = $self->{dbHandle}->prepare("INSERT INTO `ponies` (`id`, `name`, `appearance`, `description`, `gender`, `place_birth_id`, `place_home_id`, `species_id`, `dt_created`, `creator_id`)
+                                            VALUES               (?,    ?,      ?,            ?,             ?,        ?,                ?,               ?,            ?,            ?);");
+    
+    my $result = $query->execute(
+        $pony->getId(),
+        $pony->getName(),
+        $pony->getAppearance(),
+        $pony->getDescription(),
+        $pony->getGender(),
+        $pony->getPlaceBirthId(),
+        $pony->getPlaceHomeId(),
+        $pony->getSpeciesId(),
+        $pony->getDtCreated(),
+        $pony->getCreatorId()
+    );
+    
+    if ($result eq 1) {
+        return $pony->getId();
+    } else {
+        return 0;
+    }
+}
+
 1;
