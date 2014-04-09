@@ -7,11 +7,15 @@ use Dancer;
 use Dancer::Plugin::REST;
 
 sub new {
-    my $class   = shift;
-    my $factory = shift;
+    my $class          = shift;
+    my $factory        = shift;
+    my $placeFactory   = shift;
+    my $speciesFactory = shift;
 
     my $self = {
-        factory => $factory
+        factory        => $factory,
+        placeFactory   => $placeFactory,
+        speciesFactory => $speciesFactory
     };
 
     bless  $self, $class;
@@ -71,6 +75,20 @@ sub viewPony {
             href => '/place/' . $pony->getPlaceHomeId() . '.' . $format
         }
     };
+}
+
+sub createPony {
+    my $self         = shift;
+    my $name         = shift;
+    my $description  = shift;
+    my $appearance   = shift;
+    my $gender       = shift;
+    my $placeBirthId = shift;
+    my $placeHomeId  = shift;
+    my $speciesId    = shift;
+    
+    return status_bad_request("That name is already taken.") if ($self->{factory}->getPonyByName($name) ne 0);
+    
 }
 
 1;

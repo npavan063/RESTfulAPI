@@ -26,7 +26,7 @@ sub generateUUID {
     return $self->{uuidGenerator}->create_string();
 }
 
-sub store_cache {
+sub storeCache {
     my $self    = shift;
     my $key     = shift;
     my $content = shift;
@@ -34,7 +34,7 @@ sub store_cache {
     memcached_store($key, $content);
 }
 
-sub get_cache {
+sub getCache {
     my $self = shift;
     my $key  = shift;
 
