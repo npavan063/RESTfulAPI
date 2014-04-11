@@ -9,8 +9,11 @@ use Openponies::Controller::Place;
 
 use Data::UUID::MT;
 
+my $dbh                      = database();
+$dbh->{mysql_auto_reconnect} = 1;
+
 my $uuidGenerator = Data::UUID::MT->new();
-my $gateway       = Openponies::Entity::Place::Gateway->new(database(), $uuidGenerator);
+my $gateway       = Openponies::Entity::Place::Gateway->new($dbh, $uuidGenerator);
 my $factory       = Openponies::Entity::Place::Factory->new($gateway);
 my $controller    = Openponies::Controller::Place->new($factory);
 

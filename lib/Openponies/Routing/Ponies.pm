@@ -17,12 +17,15 @@ use Openponies::Controller::Place;
 
 use Data::UUID::MT;
 
+my $dbh                      = database();
+$dbh->{mysql_auto_reconnect} = 1;
+
 my $uuidGenerator  = Data::UUID::MT->new();
-my $gateway        = Openponies::Entity::Pony::Gateway->new(database(), $uuidGenerator);
+my $gateway        = Openponies::Entity::Pony::Gateway->new($dbh, $uuidGenerator);
 my $factory        = Openponies::Entity::Pony::Factory->new($gateway);
-my $placeGateway   = Openponies::Entity::Place::Gateway->new(database(), $uuidGenerator);
+my $placeGateway   = Openponies::Entity::Place::Gateway->new($dbh, $uuidGenerator);
 my $placeFactory   = Openponies::Entity::Place::Factory->new($placeGateway);
-my $speciesGateway = Openponies::Entity::Species::Gateway->new(database(), $uuidGenerator);
+my $speciesGateway = Openponies::Entity::Species::Gateway->new($dbh, $uuidGenerator);
 my $speciesFactory = Openponies::Entity::Species::Factory->new($speciesGateway);
 my $controller     = Openponies::Controller::Pony->new($factory, $placeFactory, $speciesFactory);
 

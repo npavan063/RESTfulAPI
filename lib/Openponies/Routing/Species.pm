@@ -9,8 +9,11 @@ use Openponies::Controller::Species;
 
 use Data::UUID::MT;
 
+my $dbh                      = database();
+$dbh->{mysql_auto_reconnect} = 1;
+
 my $uuidGenerator = Data::UUID::MT->new();
-my $gateway       = Openponies::Entity::Species::Gateway->new(database(), $uuidGenerator);
+my $gateway       = Openponies::Entity::Species::Gateway->new($dbh, $uuidGenerator);
 my $factory       = Openponies::Entity::Species::Factory->new($gateway);
 my $controller    = Openponies::Controller::Species->new($factory);
 
