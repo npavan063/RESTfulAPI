@@ -87,14 +87,14 @@ sub createPony {
     my $placeHomeId  = shift;
     my $speciesId    = shift;
     
-    # Name and gender should be title case
-    $name   =~ s/(\w+)/\u\L$1/g;
-    $gender =~ s/(\w+)/\u\L$1/g;
-    
     unless (defined $name && defined $description && defined $appearance && defined $gender && defined $placeBirthId && defined $placeHomeId && defined $speciesId &&
             $name ne ''   && $description ne ''   && $appearance ne ''   && $gender ne ''   && $placeBirthId ne ''   && $placeHomeId ne ''   && $speciesId ne '') {
         return status_bad_request('Must send name, description, appearance, gender, place_birth_id, place_home_id & species_id parameters.');
     }
+    
+    # Name and gender should be title case
+    $name   =~ s/(\w+)/\u\L$1/g;
+    $gender =~ s/(\w+)/\u\L$1/g;
     
     return status_bad_request("That name is already taken.")
         if ($self->{factory}->getPonyByName($name) ne 0);

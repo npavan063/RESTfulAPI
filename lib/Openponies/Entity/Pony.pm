@@ -6,8 +6,6 @@ use strict;
 use DateTime;
 use DateTime::Format::MySQL;
 
-use Data::Dumper;
-
 my %data = (
     id             => '',
     appearance     => '',

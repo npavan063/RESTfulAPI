@@ -22,6 +22,22 @@ sub getPlaceById {
     }
 }
 
+sub getPlaceByName {
+    my $self = shift;
+    my $name = shift;
+
+    my $query = $self->{dbHandle}->prepare("SELECT * FROM `places` WHERE `name` = ? LIMIT 1;");
+    $query->execute($name);
+
+    my $data = $query->fetchrow_hashref;
+
+    if (defined $data) {
+        return $data;
+    } else {
+        return 0;
+    }
+}
+
 sub getAllPlaces {
     my $self = shift;
     
@@ -32,6 +48,28 @@ sub getAllPlaces {
     
     if (defined $data) {
         return $data;
+    } else {
+        return 0;
+    }
+}
+
+sub createPlace {
+    my $self  = shift;
+    my $place = shift;
+    
+    my $query = $self->{dbHandle}->prepare("INSERT INTO `places` (`id`, `name`, `description`, `dt_created`, `creator_id`)
+                                            VALUES               (?,    ?,      ?,             ?,            ?);");
+    
+    my $result = $query->execute(
+        $place->getId(),
+        $place->getName(),
+        $place->getDescription(),
+        $place->getDtCreated(),
+        $place->getCreatorId()
+    );
+    
+    if ($result eq 1) {
+        return $place->getId();
     } else {
         return 0;
     }

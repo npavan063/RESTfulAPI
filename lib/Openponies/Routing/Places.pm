@@ -32,4 +32,20 @@ get '/all/all.:format' => sub {
     return $controller->allPlaces();
 };
 
+post '/add.:format' => sub {
+    if (Openponies->checkLoggedIn() eq 1) {
+        my $name         = param('name');
+        my $description  = param('description');
+        
+        return $controller->createPlace($name, $description);
+    }
+};
+
+options '/add.:format' => sub {
+    header('Access-Control-Allow-Headers' => 'content-type');
+    
+    status 'ok';
+    return {OK => 'OK'};
+};
+
 1;

@@ -65,4 +65,29 @@ sub allPlaces {
     }
 }
 
+sub createPlace {
+    my $self        = shift;
+    my $name        = shift;
+    my $description = shift;
+    
+    $name   =~ s/(\w+)/\u\L$1/g;
+    
+    unless (defined $name && defined $description &&
+            $name ne ''   && $description ne '') {
+        return status_bad_request('Must send name & description.');
+    }
+    
+    return status_bad_request('That name is already taken.')
+        if ($self->{factory}->getPlaceByName($name));
+    
+    my $place   = $self->{factory}->createPlaceToInsert($name, $description, vars->{user}->getId());
+    my $placeId = $self->{factory}->{gateway}->createPlace($place);
+    
+    if ($placeId ne 0) {
+        return status_created({id => $placeId});
+    } else {
+        return status_bad_request("Place could not be created.");
+    }
+}
+
 1;
