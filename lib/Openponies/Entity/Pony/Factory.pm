@@ -71,4 +71,22 @@ sub createPonyToInsert {
     return $pony;
 }
 
+sub getAllPonies {
+    my $self = shift;
+    
+    my $data = $self->{gateway}->getAllPonies();
+    
+    if ($data ne 0) {
+        my @ponies = ();
+        
+        foreach my $row (@{$data}) {
+            push(@ponies, $self->create($row));
+        }
+        
+        return \@ponies;
+    } else {
+        return 0;
+    }
+}
+
 1;

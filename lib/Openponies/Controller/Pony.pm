@@ -77,6 +77,44 @@ sub viewPony {
     };
 }
 
+sub allPonies {
+    my $self   = shift;
+    my $format = shift;
+    
+    my $poniesList = $self->{factory}->getAllPonies();
+    
+    if ($poniesList ne 0) {
+        my $poniesHashref = {};
+        
+        foreach my $pony (@{$poniesList}) {
+            $poniesHashref->{$pony->getId()} = {
+                id             => $pony->getId(),
+                name           => $pony->getName(),
+                gender         => $pony->getGender(),
+                description    => $pony->getDescription(),
+                appearance     => $pony->getAppearance(),
+                created        => $pony->getDtCreatedTimestamp(),
+                species        => {
+                    id   => $pony->getSpeciesId(),
+                    href => '/species/' . $pony->getSpeciesId() . '.' . $format
+                },
+                place_birth    => {
+                    id   => $pony->getPlaceBirthId(),
+                    href => '/place/' . $pony->getPlaceBirthId() . '.' . $format
+                },
+                place_home     => {
+                    id   => $pony->getPlaceHomeId(),
+                    href => '/place/' . $pony->getPlaceHomeId() . '.' . $format
+                }
+            };
+        }
+        
+        return $poniesHashref;
+    } else {
+        return status_not_found('Ponies not found.');
+    }
+}
+
 sub createPony {
     my $self         = shift;
     my $name         = shift;

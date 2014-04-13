@@ -65,4 +65,19 @@ sub createPony {
     }
 }
 
+sub getAllPonies {
+    my $self = shift;
+    
+    my $query = $self->{dbHandle}->prepare("SELECT * FROM `ponies` ORDER BY `name` ASC;");
+    $query->execute();
+    
+    my $data = $query->fetchall_arrayref({});
+    
+    if (defined $data) {
+        return $data;
+    } else {
+        return 0;
+    }
+}
+
 1;

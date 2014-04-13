@@ -43,6 +43,12 @@ get '/byname/:name.:format' => sub {
     return $controller->viewPonyByName($name, $format);
 };
 
+get '/all/all.:format' => sub {
+    my $format = params->{format};
+    
+    return $controller->allPonies($format);
+};
+
 post '/add.:format' => sub {
     if (Openponies->checkLoggedIn() eq 1) {
         my $name         = param('name');
