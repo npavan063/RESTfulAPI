@@ -72,7 +72,7 @@ sub getAllPonies {
     
     $limit     = 50 if ($limit =~ m/\D/ || $limit > 50);
     $page      = 1  if ($page  =~ m/\D/);
-    my $offset = 1 + (($page - 1) * $limit);
+    my $offset = ($page - 1) * $limit;
     
     my $query = $self->{dbHandle}->prepare("SELECT * FROM `ponies` ORDER BY `name` ASC LIMIT $limit OFFSET $offset;");
     $query->execute();
