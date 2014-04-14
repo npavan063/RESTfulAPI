@@ -46,7 +46,18 @@ get '/byname/:name.:format' => sub {
 get '/all/all.:format' => sub {
     my $format = params->{format};
     
-    return $controller->allPonies($format);
+    my $page  = 1;
+    my $limit = 50;
+    
+    if (defined param('page') && param('page') =~ m/^\d+$/) {
+        $page = param('page');
+    }
+        
+    if (defined param('limit') && param('limit') =~ m/^\d+$/ && param('limit') <= 50) {
+        $limit = param('limit');
+    }
+    
+    return $controller->allPonies($format, $page, $limit);
 };
 
 post '/add.:format' => sub {

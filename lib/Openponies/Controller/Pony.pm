@@ -80,8 +80,10 @@ sub viewPony {
 sub allPonies {
     my $self   = shift;
     my $format = shift;
+    my $page   = shift;
+    my $limit  = shift;
     
-    my $poniesList = $self->{factory}->getAllPonies();
+    my $poniesList = $self->{factory}->getAllPonies($page, $limit);
     
     if ($poniesList ne 0) {
         my $poniesHashref = {};

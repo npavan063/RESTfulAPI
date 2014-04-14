@@ -66,9 +66,15 @@ sub createPony {
 }
 
 sub getAllPonies {
-    my $self = shift;
+    my $self  = shift;
+    my $page  = shift;
+    my $limit = shift;
     
-    my $query = $self->{dbHandle}->prepare("SELECT * FROM `ponies` ORDER BY `name` ASC;");
+    $limit     = 50 if ($limit =~ m/\D/ || $limit > 50);
+    $page      = 1  if ($page  =~ m/\D/);
+    my $offset = 1 + (($page - 1) * $limit);
+    
+    my $query = $self->{dbHandle}->prepare("SELECT * FROM `ponies` ORDER BY `name` ASC LIMIT $limit OFFSET $offset;");
     $query->execute();
     
     my $data = $query->fetchall_arrayref({});

@@ -72,9 +72,11 @@ sub createPonyToInsert {
 }
 
 sub getAllPonies {
-    my $self = shift;
+    my $self  = shift;
+    my $page  = shift;
+    my $limit = shift;
     
-    my $data = $self->{gateway}->getAllPonies();
+    my $data = $self->{gateway}->getAllPonies($page, $limit);
     
     if ($data ne 0) {
         my @ponies = ();
