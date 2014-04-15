@@ -86,4 +86,19 @@ sub getAllPonies {
     }
 }
 
+sub countPonies {
+    my $self = shift;
+    
+    my $query = $self->{dbHandle}->prepare("SELECT COUNT(*) AS `total` FROM `ponies`;");
+    $query->execute();
+    
+    my $data = $query->fetchrow_hashref;
+    
+    if (defined $data && defined $data->{total}) {
+        return $data->{total}
+    } else {
+        return 0;
+    }
+}
+
 1;

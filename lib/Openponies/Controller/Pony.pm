@@ -157,4 +157,17 @@ sub createPony {
     }
 }
 
+sub countPonies {
+    my $self   = shift;
+    my $format = shift;
+    
+    my $count = $self->{factory}->{gateway}->countPonies();
+    
+    if ($count > 0) {
+        return {total => $count};
+    } else {
+        return status_not_found('Not found.');
+    }
+}
+
 1;

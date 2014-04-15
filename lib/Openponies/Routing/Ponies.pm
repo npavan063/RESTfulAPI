@@ -60,6 +60,12 @@ get '/all/all.:format' => sub {
     return $controller->allPonies($format, $page, $limit);
 };
 
+get '/all/count.:format' => sub {
+    my $format = params->{format};
+    
+    return $controller->countPonies();
+};
+
 post '/add.:format' => sub {
     if (Openponies->checkLoggedIn() eq 1) {
         my $name         = param('name');
