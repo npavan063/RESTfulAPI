@@ -6,15 +6,16 @@ use strict;
 use DateTime;
 use DateTime::Format::MySQL;
 
-use Data::Dumper;
-
 my %data = (
-    id            => '',
-    login         => '',
-    password      => '',
-    email_address => '',
-    roles         => '',
-    name          => ''
+    id                 => '',
+    login              => '',
+    password           => '',
+    email_address      => '',
+    roles              => '',
+    name               => '',
+    reset_token        => '',
+    reset_token_expiry => '',
+    last_login         => ''
 );
 
 sub new {
@@ -71,6 +72,31 @@ sub getName {
     my $self = shift;
 
     return $self->{name};
+}
+
+sub getResetToken {
+    my $self = shift;
+    
+    return $self->{reset_token};
+}
+
+sub getResetTokenExpiry {
+    my $self = shift;
+    
+    return $self->{reset_token_expiry};
+}
+
+sub getLastLogin {
+    my $self = shift;
+    
+    return $self->{last_login};
+}
+
+sub getResetTokenExpiryTimestamp {
+    my $self = shift;
+
+    my $dt = DateTime::Format::MySQL->parse_datetime($self->{reset_token_expiry});
+    return $dt->epoch();
 }
 
 1;

@@ -70,4 +70,32 @@ options '/changepassword.:format' => sub {
     return {OK => 'OK'};
 };
 
+put '/resetpassword.:format' => sub {
+    my $username = param('username');
+    my $email    = param('email');
+    
+    return $controller->requestReset($username, $email);
+};
+
+put '/confirmreset.:format' => sub {
+    my $username = param('username');
+    my $token    = param('token');
+    
+    return $controller->confirmReset($username, $token);
+};
+
+options '/resetpassword.:format' => sub {
+    header('Access-Control-Allow-Headers' => 'content-type');
+    
+    status 'ok';
+    return {OK => 'OK'};
+};
+
+options '/confirmreset.:format' => sub {
+    header('Access-Control-Allow-Headers' => 'content-type');
+    
+    status 'ok';
+    return {OK => 'OK'};
+};
+
 1;

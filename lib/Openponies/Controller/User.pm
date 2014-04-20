@@ -36,6 +36,8 @@ sub authenticate {
     unless ($result eq 0) {
         if (passphrase($password)->matches($result->getPasswordHash())) {
             $user = $result;
+            
+            $self->{factory}->{gateway}->setLastLogin($username, DateTime::Format::MySQL->format_datetime(DateTime->now()));
         }
     }
 
@@ -110,6 +112,69 @@ sub changePassword {
     } else {
         return status_bad_request("Password could not be updated.");
     }
+}
+
+sub requestReset {
+    my $self     = shift;
+    my $username = shift;
+    my $email    = shift;
+    
+    my $user = $self->{factory}->getUserByAuth($username);
+    
+    return status_not_found("Username not found")
+        if ($user eq 0);
+    return status_bad_request("The e-mail address does not match our records for $username")
+        if ($email ne $user->getEmailAddress());
+    
+    my $token    = $self->{factory}->generateResetToken($user);
+    my $resetUrl = "https://www.openponies.com/login.html?action=reset&username=$username&token=$token";
+    
+    my $mailer = Openponies::Service::Mail::User->new();
+    my $result = $mailer->sendResetUrlByEmail($email, $username, $resetUrl);
+    
+    if ($result ne 0) {
+        return status_accepted({id => $user->getId()});
+    } else {
+        return status_bad_request("Password reset request could not be processed.");
+    }
+}
+
+sub confirmReset {
+    my $self     = shift;
+    my $username = shift;
+    my $token    = shift;
+    
+    my $user = $self->{factory}->getUserByAuth($username);
+    
+    return status_bad_request("User not found.")
+        if ($user eq 0);
+    
+    my $email  = $user->getEmailAddress();
+    my $expiry = $user->getResetTokenExpiryTimestamp();
+    
+    return status_bad_request("Invalid token for $username.")
+        if ($token ne $user->getResetToken());
+    return status_bad_request("That token has expired. Please create a new reset request")
+        if ($expiry < time());
+    
+    my $generator = Openponies::Service::Random->new();
+    my $password  = $generator->generatePassword();
+    my $salted    = passphrase($password)->generate();
+    
+    my $result = $self->{factory}->{gateway}->updatePassword($username, $salted);
+    
+    return status_bad_request("Password reset request could not be processed.")
+        if ($result eq 0);
+    
+    my $mailer = Openponies::Service::Mail::User->new();
+    my $result = $mailer->sendRandomPasswordByEmail($email, $username, $password);
+    
+    if ($result eq $mailer->CANT_SEND_MAIL) {
+        status 'internal_server_error';
+        return ({error => "Failed to send new password by e-mail."});
+    }
+    
+    return status_created({id => $user->getId()});
 }
 
 1;

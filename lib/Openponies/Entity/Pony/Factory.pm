@@ -6,6 +6,7 @@ use strict;
 use Openponies::Entity::Abstract::Factory;
 use Openponies::Entity::Pony;
 
+use DateTime::Format::MySQL;
 use DateTime;
 
 our @ISA = qw(Openponies::Entity::Abstract::Factory);

@@ -84,4 +84,35 @@ sub updatePassword {
     }
 }
 
+sub setLastLogin {
+    my $self      = shift;
+    my $username  = shift;
+    my $lastLogin = shift;
+    
+    my $query  = $self->{dbHandle}->prepare("UPDATE `users` SET `last_login` = ? WHERE `login` = ? LIMIT 1;");
+    my $result = $query->execute($lastLogin, $username);
+    
+    if ($result eq 1) {
+        return 1;
+    } else {
+        return 0;
+    }
+}
+
+sub setResetToken {
+    my $self     = shift;
+    my $username = shift;
+    my $token    = shift;
+    my $expiry   = shift;
+    
+    my $query  = $self->{dbHandle}->prepare("UPDATE `users` SET `reset_token` = ?, `reset_token_expiry` = ? WHERE `login` = ? LIMIT 1;");
+    my $result = $query->execute($token, $expiry, $username);
+    
+    if ($result eq 1) {
+        return 1;
+    } else {
+        return 0;
+    }
+}
+
 1;
