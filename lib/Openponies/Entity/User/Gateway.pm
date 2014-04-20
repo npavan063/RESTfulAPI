@@ -115,4 +115,18 @@ sub setResetToken {
     }
 }
 
+sub expireResetToken {
+    my $self     = shift;
+    my $username = shift;
+    
+    my $query  = $self->{dbHandle}->prepare("UPDATE `users` SET `reset_token_expiry` = '1970-01-01 00:00:01' WHERE `login` = ? LIMIT 1;");
+    my $result = $query->execute($username);
+    
+    if ($result eq 1) {
+        return 1;
+    } else {
+        return 0;
+    }   
+}
+
 1;

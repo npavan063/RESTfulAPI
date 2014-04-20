@@ -166,6 +166,8 @@ sub confirmReset {
     return status_bad_request("Password reset request could not be processed.")
         if ($result eq 0);
     
+    my $result = $self->{factory}->{gateway}->expireResetToken($username);
+    
     my $mailer = Openponies::Service::Mail::User->new();
     my $result = $mailer->sendRandomPasswordByEmail($email, $username, $password);
     
