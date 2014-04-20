@@ -69,4 +69,19 @@ sub deleteUserByUsername {
     }
 }
 
+sub updatePassword {
+    my $self     = shift;
+    my $username = shift;
+    my $password = shift;
+    
+    my $query  = $self->{dbHandle}->prepare("UPDATE `users` SET `password` = ? WHERE `login` = ? LIMIT 1;");
+    my $result = $query->execute($password, $username);
+    
+    if ($result eq 1) {
+        return 1;
+    } else {
+        return 0;
+    }
+}
+
 1;

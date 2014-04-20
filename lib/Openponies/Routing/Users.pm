@@ -55,4 +55,19 @@ options '/register.:format' => sub {
     return {OK => 'OK'};
 };
 
+put '/changepassword.:format' => sub {
+    if (Openponies->checkLoggedIn() eq 1) {
+        my $newPassword = param('new_password');
+        
+        return $controller->changePassword($newPassword);
+    }
+};
+
+options '/changepassword.:format' => sub {
+    header('Access-Control-Allow-Headers' => 'content-type');
+    
+    status 'ok';
+    return {OK => 'OK'};
+};
+
 1;

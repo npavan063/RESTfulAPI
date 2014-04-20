@@ -91,4 +91,25 @@ sub register {
     return status_created({id => $userId});
 }
 
+sub changePassword {
+    my $self        = shift;
+    my $newPassword = shift;
+
+    return status_bad_request('Must send new password.')
+        unless (defined $newPassword && $newPassword ne '');
+    return status_bad_request('Password must be 8-72 characters and contain a lowercase, uppercase & special character')
+        unless ($newPassword =~ /^\S*(?=\S*[a-z])(?=\S*[A-Z])(?=\S*[\d])(?=\S{8,72})\S*$/);
+
+    my $salted = passphrase($newPassword)->generate();
+        
+    my $username = vars->{user}->getUsername();
+    my $result   = $self->{factory}->{gateway}->updatePassword($username, $salted);
+    
+    if ($result ne 0) {
+        return status_accepted({id => vars->{user}->getId()});
+    } else {
+        return status_bad_request("Password could not be updated.");
+    }
+}
+
 1;
