@@ -4,6 +4,8 @@ use warnings;
 use strict;
 
 use Openponies;
+use Openponies::Service::Random;
+use Openponies::Service::Mail::User;
 
 use Dancer;
 use Dancer::Plugin::REST;
@@ -49,37 +51,44 @@ sub successfulLogin {
 sub register {
     my $self     = shift;
     my $username = shift;
-    my $password = shift;
     my $email    = shift;
     my $format   = shift;
     
+    my $generator = Openponies::Service::Random->new();
+    my $password  = $generator->generatePassword();
+    
     unless (defined $username && defined $password && defined $email &&
             $username ne ''   && $password ne ''   && $email ne '') {
-        return status_bad_request('Must send username, password & email parameters.');
+                return status_bad_request('Must send username, password & email parameters.');
     }
     
+    # Validate email address, username
     return status_bad_request("E-mail address $email not valid (RFC822).")               unless (valid($email));
     return status_bad_request('Username must be under 60 characters and alphanumeric.')  unless ($username =~ /^[A-Za-z0-9]{1,60}$/);
-    return status_bad_request('Password must be 8-100 characters and contain a number.') unless ($password =~ /^\S*(?=\S*[\d])(?=\S{8,100})\S*$/);
     
     my $salted = passphrase($password)->generate();
     
     my $user   = $self->{factory}->createUserForRegistration($username, $salted, $email);
     my $userId = $self->{factory}->{gateway}->registerUser($user);
     
-    if ($userId eq $self->{factory}->{gateway}->ERROR_USERNAME_EXISTS) {
-        return status_bad_request("Username $username already exists in database.");
+    # Return an error if the user or email exists, or user failed to create
+    return status_bad_request("Username $username already exists in database.")
+        if ($userId eq $self->{factory}->{gateway}->ERROR_USERNAME_EXISTS);
+    return status_bad_request("Email address $email already exists in database.")
+        if ($userId eq $self->{factory}->{gateway}->ERROR_EMAIL_EXISTS);
+    return status_bad_request("User could not be created.")
+        if ($userId eq 0);
+    
+    my $mailer = Openponies::Service::Mail::User->new();
+    my $result = $mailer->sendPasswordByEmail($email, $username, $password);
+    
+    if ($result eq $mailer->CANT_SEND_MAIL) {
+        $self->{factory}->{gateway}->deleteUserByUsername($username);
+        status 'internal_server_error';
+        return ({error => "Failed to send password e-mail"});
     }
     
-    if ($userId eq $self->{factory}->{gateway}->ERROR_EMAIL_EXISTS) {
-        return status_bad_request("Email address $email already exists in database.");
-    }
-    
-    if ($userId ne 0) {
-        return status_created({id => $userId});
-    } else {
-        return status_bad_request("User could not be created.");
-    }
+    return status_created({id => $userId});
 }
 
 1;

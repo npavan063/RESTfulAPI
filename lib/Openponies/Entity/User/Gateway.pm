@@ -55,4 +55,18 @@ sub registerUser {
     }
 }
 
+sub deleteUserByUsername {
+    my $self     = shift;
+    my $username = shift;
+    
+    my $query  = $self->{dbHandle}->prepare("DELETE FROM `users` WHERE `login` = ? LIMIT 1;");
+    my $result = $query->execute($username);
+    
+    if ($result eq 1) {
+        return 1;
+    } else {
+        return 0;
+    }
+}
+
 1;

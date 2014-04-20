@@ -42,11 +42,10 @@ any '/forbidden' => sub {
 
 post '/register.:format' => sub {
     my $username = param('username');
-    my $password = param('password');
     my $email    = param('email');
     my $format   = param('format');
     
-    return $controller->register($username, $password, $email, $format);
+    return $controller->register($username, $email, $format);
 };
 
 options '/register.:format' => sub {
