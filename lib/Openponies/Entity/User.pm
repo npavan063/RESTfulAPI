@@ -15,7 +15,10 @@ my %data = (
     name               => '',
     reset_token        => '',
     reset_token_expiry => '',
-    last_login         => ''
+    last_login         => '',
+    banned             => '',
+    ban_reason         => '',
+    banned_by          => ''
 );
 
 sub new {
@@ -68,6 +71,13 @@ sub getRoles {
     return $self->{roles};
 }
 
+sub getRolesArray {
+    my $self  = shift;
+    my @roles = split(/,\s*/, $self->{roles});
+    
+    return \@roles;
+}
+
 sub getName {
     my $self = shift;
 
@@ -97,6 +107,14 @@ sub getResetTokenExpiryTimestamp {
 
     my $dt = DateTime::Format::MySQL->parse_datetime($self->{reset_token_expiry});
     return $dt->epoch();
+}
+
+sub getBanned {
+    my $self = shift;
+    
+    return $self->{banned}
+        if (defined $self->{banned} && $self->{banned} ne '');
+    return 0;
 }
 
 1;

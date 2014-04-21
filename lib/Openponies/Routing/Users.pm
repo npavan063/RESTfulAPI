@@ -40,6 +40,11 @@ any '/forbidden' => sub {
     return({error => 'Access denied - You do not have access to that resource.'});
 };
 
+any '/yourebanned' => sub {
+    status 'unauthorized';
+    return({error => 'Your account is banned.'});
+};
+
 post '/register.:format' => sub {
     my $username = param('username');
     my $email    = param('email');
@@ -92,6 +97,24 @@ options '/resetpassword.:format' => sub {
 };
 
 options '/confirmreset.:format' => sub {
+    header('Access-Control-Allow-Headers' => 'content-type');
+    
+    status 'ok';
+    return {OK => 'OK'};
+};
+
+put '/banuser.:format' => sub {
+    if (Openponies->checkLoggedIn() eq 1) {
+        if (Openponies->checkHasRole('admin')) {
+            my $userToBan = param('user_to_ban');
+            my $reason    = param('reason');
+            
+            return $controller->banUser($userToBan, $reason);
+        }
+    }
+};
+
+options '/banuser.:format' => sub {
     header('Access-Control-Allow-Headers' => 'content-type');
     
     status 'ok';

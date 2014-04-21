@@ -108,7 +108,7 @@ sub changePassword {
     my $result   = $self->{factory}->{gateway}->updatePassword($username, $salted);
     
     if ($result ne 0) {
-        return status_accepted({id => vars->{user}->getId()});
+        return status_accepted({status => "Password successfully changed."});
     } else {
         return status_bad_request("Password could not be updated.");
     }
@@ -133,7 +133,7 @@ sub requestReset {
     my $result = $mailer->sendResetUrlByEmail($email, $username, $resetUrl);
     
     if ($result ne 0) {
-        return status_accepted({id => $user->getId()});
+        return status_accepted({status => "Password reset successful."});
     } else {
         return status_bad_request("Password reset request could not be processed.");
     }
@@ -166,17 +166,43 @@ sub confirmReset {
     return status_bad_request("Password reset request could not be processed.")
         if ($result eq 0);
     
-    my $result = $self->{factory}->{gateway}->expireResetToken($username);
+    my $expResult = $self->{factory}->{gateway}->expireResetToken($username);
     
-    my $mailer = Openponies::Service::Mail::User->new();
-    my $result = $mailer->sendRandomPasswordByEmail($email, $username, $password);
+    my $mailer     = Openponies::Service::Mail::User->new();
+    my $mailResult = $mailer->sendRandomPasswordByEmail($email, $username, $password);
     
-    if ($result eq $mailer->CANT_SEND_MAIL) {
+    if ($mailResult eq $mailer->CANT_SEND_MAIL) {
         status 'internal_server_error';
         return ({error => "Failed to send new password by e-mail."});
     }
     
-    return status_created({id => $user->getId()});
+    return status_accepted({status => "New password successfully sent."});
+}
+
+sub banUser {
+    my $self     = shift;
+    my $username = shift;
+    my $reason   = shift;
+    
+    my $user = $self->{factory}->getUserByAuth($username);
+    
+    return status_bad_request("User not found.")
+        if ($user eq 0);
+    
+    my $result = $self->{factory}->{gateway}->banUser($username, $reason, vars->{user}->getId());
+    
+    return status_bad_request("Ban request could not be processed.")
+        if ($result eq 0);
+    
+    my $mailer     = Openponies::Service::Mail::User->new();
+    my $mailResult = $mailer->sendBanByEmail($user->getEmailAddress(), $username, vars->{user}->getUsername(), $reason);
+    
+    if ($mailResult eq $mailer->CANT_SEND_MAIL) {
+        status 'internal_server_error';
+        return ({error => "Failed to send ban notification by e-mail."});
+    }
+    
+    return status_accepted({status => "$username successfully banned."});
 }
 
 1;

@@ -129,4 +129,20 @@ sub expireResetToken {
     }   
 }
 
+sub banUser {
+    my $self     = shift;
+    my $username = shift;
+    my $reason   = shift;
+    my $bannedBy = shift;
+    
+    my $query  = $self->{dbHandle}->prepare("UPDATE `users` SET `banned` = 1, `banned_by` = ?, `ban_reason` = ? WHERE `login` = ? LIMIT 1;");
+    my $result = $query->execute($bannedBy, $reason, $username);
+    
+    if ($result eq 1) {
+        return 1;
+    } else {
+        return 0;
+    }  
+}
+
 1;

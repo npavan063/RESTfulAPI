@@ -79,4 +79,31 @@ sub sendResetUrlByEmail {
     return $self->sendEmail($to, $subject, $body);
 }
 
+sub sendBanByEmail {
+    my $self     = shift;
+    my $to       = shift;
+    my $username = shift;
+    my $admin    = shift;
+    my $reason   = shift;
+    
+    my $subject = "Openponies Password Reset Request";
+    
+    (my $body = << "    END_MESSAGE") =~ s/^ {4}//gm;
+    Dear $username,
+    
+    Your account has been banned for breaching Openponies rules.
+    
+    The reason given was: $reason
+    
+    Please contact Openponies support if you believe this email was sent in error.
+    
+    NOTE: Please do not reply to this e-mail. We do not monitor this account.
+    
+    Regards,
+    Openponies Support.
+    END_MESSAGE
+
+    return $self->sendEmail($to, $subject, $body);
+}
+
 1;
