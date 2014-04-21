@@ -7,6 +7,8 @@ use Openponies;
 use Openponies::Entity::User::Gateway;
 use Openponies::Entity::User::Factory;
 use Openponies::Controller::User;
+use Openponies::Service::Authorization;
+use Openponies::Service::Mail::User;
 
 use Data::UUID::MT;
 
@@ -16,7 +18,9 @@ $dbh->{mysql_auto_reconnect} = 1;
 my $uuidGenerator = Data::UUID::MT->new();
 my $gateway       = Openponies::Entity::User::Gateway->new($dbh, $uuidGenerator);
 my $factory       = Openponies::Entity::User::Factory->new($gateway);
-my $controller    = Openponies::Controller::User->new($factory);
+my $mailer        = Openponies::Service::Mail::User->new();
+my $generator     = Openponies::Service::Random->new();
+my $controller    = Openponies::Controller::User->new($factory, $mailer, $generator);
 
 hook 'before' => sub {
     if (defined params->{username} && defined params->{password}) {
@@ -27,7 +31,7 @@ hook 'before' => sub {
 prefix '/user';
 
 get '/checklogin.:format' => sub {
-    return $controller->successfulLogin() if (Openponies->checkLoggedIn() eq 1);
+    return $controller->successfulLogin() if (Openponies::Service::Authorization->loggedInOrRedirect() eq 1);
 };
 
 any '/unauthorized' => sub {
@@ -41,7 +45,7 @@ any '/forbidden' => sub {
 };
 
 any '/yourebanned' => sub {
-    status 'unauthorized';
+    status 'forbidden';
     return({error => 'Your account is banned.'});
 };
 
@@ -61,7 +65,7 @@ options '/register.:format' => sub {
 };
 
 put '/changepassword.:format' => sub {
-    if (Openponies->checkLoggedIn() eq 1) {
+    if (Openponies::Service::Authorization->loggedInOrRedirect() eq 1) {
         my $newPassword = param('new_password');
         
         return $controller->changePassword($newPassword);
@@ -104,12 +108,14 @@ options '/confirmreset.:format' => sub {
 };
 
 put '/banuser.:format' => sub {
-    if (Openponies->checkLoggedIn() eq 1) {
-        if (Openponies->checkHasRole('admin')) {
+    if (Openponies::Service::Authorization->loggedInOrRedirect() eq 1) {
+        if (Openponies::Service::Authorization->checkHasRole('admin')) {
             my $userToBan = param('user_to_ban');
             my $reason    = param('reason');
             
             return $controller->banUser($userToBan, $reason);
+        } else {
+            return forward('/user/forbidden');
         }
     }
 };

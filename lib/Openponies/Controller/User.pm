@@ -5,7 +5,6 @@ use strict;
 
 use Openponies;
 use Openponies::Service::Random;
-use Openponies::Service::Mail::User;
 
 use Dancer;
 use Dancer::Plugin::REST;
@@ -14,11 +13,15 @@ use Dancer::Plugin::Passphrase;
 use Mail::RFC822::Address qw(valid);
 
 sub new {
-    my $class   = shift;
-    my $factory = shift;
+    my $class     = shift;
+    my $factory   = shift;
+    my $mailer    = shift;
+    my $generator = shift;
 
     my $self = {
-        factory => $factory
+        factory   => $factory,
+        mailer    => $mailer,
+        generator => $generator
     };
 
     bless  $self, $class;
@@ -56,8 +59,7 @@ sub register {
     my $email    = shift;
     my $format   = shift;
     
-    my $generator = Openponies::Service::Random->new();
-    my $password  = $generator->generatePassword();
+    my $password  = $self->{generator}->generatePassword();
     
     unless (defined $username && defined $password && defined $email &&
             $username ne ''   && $password ne ''   && $email ne '') {
@@ -81,10 +83,9 @@ sub register {
     return status_bad_request("User could not be created.")
         if ($userId eq 0);
     
-    my $mailer = Openponies::Service::Mail::User->new();
-    my $result = $mailer->sendPasswordByEmail($email, $username, $password);
+    my $result = $self->{mailer}->sendPasswordByEmail($email, $username, $password);
     
-    if ($result eq $mailer->CANT_SEND_MAIL) {
+    if ($result eq $self->{mailer}->CANT_SEND_MAIL) {
         $self->{factory}->{gateway}->deleteUserByUsername($username);
         status 'internal_server_error';
         return ({error => "Failed to send password e-mail"});
@@ -129,8 +130,7 @@ sub requestReset {
     my $token    = $self->{factory}->generateResetToken($user);
     my $resetUrl = "https://www.openponies.com/login.html?action=reset&username=$username&token=$token";
     
-    my $mailer = Openponies::Service::Mail::User->new();
-    my $result = $mailer->sendResetUrlByEmail($email, $username, $resetUrl);
+    my $result = $self->{mailer}->sendResetUrlByEmail($email, $username, $resetUrl);
     
     if ($result ne 0) {
         return status_accepted({status => "Password reset successful."});
@@ -157,8 +157,7 @@ sub confirmReset {
     return status_bad_request("That token has expired. Please create a new reset request")
         if ($expiry < time());
     
-    my $generator = Openponies::Service::Random->new();
-    my $password  = $generator->generatePassword();
+    my $password  = $self->{generator}->generatePassword();
     my $salted    = passphrase($password)->generate();
     
     my $result = $self->{factory}->{gateway}->updatePassword($username, $salted);
@@ -168,10 +167,9 @@ sub confirmReset {
     
     my $expResult = $self->{factory}->{gateway}->expireResetToken($username);
     
-    my $mailer     = Openponies::Service::Mail::User->new();
-    my $mailResult = $mailer->sendRandomPasswordByEmail($email, $username, $password);
+    my $mailResult = $self->{mailer}->sendRandomPasswordByEmail($email, $username, $password);
     
-    if ($mailResult eq $mailer->CANT_SEND_MAIL) {
+    if ($mailResult eq $self->{mailer}->CANT_SEND_MAIL) {
         status 'internal_server_error';
         return ({error => "Failed to send new password by e-mail."});
     }
@@ -194,10 +192,9 @@ sub banUser {
     return status_bad_request("Ban request could not be processed.")
         if ($result eq 0);
     
-    my $mailer     = Openponies::Service::Mail::User->new();
-    my $mailResult = $mailer->sendBanByEmail($user->getEmailAddress(), $username, vars->{user}->getUsername(), $reason);
+    my $mailResult = $self->{mailer}->sendBanByEmail($user->getEmailAddress(), $username, vars->{user}->getUsername(), $reason);
     
-    if ($mailResult eq $mailer->CANT_SEND_MAIL) {
+    if ($mailResult eq $self->{mailer}->CANT_SEND_MAIL) {
         status 'internal_server_error';
         return ({error => "Failed to send ban notification by e-mail."});
     }

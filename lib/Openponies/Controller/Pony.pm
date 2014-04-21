@@ -170,4 +170,11 @@ sub countPonies {
     }
 }
 
+sub deletePony {
+    my $self = shift;
+    my $pony = shift;
+    
+    
+}
+
 1;

@@ -6,6 +6,7 @@ use Dancer::Plugin::Database;
 use Openponies::Entity::Species::Gateway;
 use Openponies::Entity::Species::Factory;
 use Openponies::Controller::Species;
+use Openponies::Service::Authorization;
 
 use Data::UUID::MT;
 

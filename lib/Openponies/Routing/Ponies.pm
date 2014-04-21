@@ -15,6 +15,8 @@ use Openponies::Entity::Place::Gateway;
 use Openponies::Entity::Place::Factory;
 use Openponies::Controller::Place;
 
+use Openponies::Service::Authorization;
+
 use Data::UUID::MT;
 
 my $dbh                      = database();
@@ -67,7 +69,7 @@ get '/all/count.:format' => sub {
 };
 
 post '/add.:format' => sub {
-    if (Openponies->checkLoggedIn() eq 1) {
+    if (Openponies::Service::Authorization->loggedInOrRedirect() eq 1) {
         my $name         = param('name');
         my $description  = param('description');
         my $appearance   = param('appearance');
@@ -81,6 +83,21 @@ post '/add.:format' => sub {
 };
 
 options '/add.:format' => sub {
+    header('Access-Control-Allow-Headers' => 'content-type');
+    
+    status 'ok';
+    return {OK => 'OK'};
+};
+
+put '/delete.:format' => sub {
+    if (Openponies::Service::Authorization->loggedInOrRedirect() eq 1) {
+        my $pony = param('pony');
+            
+        return $controller->deletePony($pony);
+    }
+};
+
+options '/delete.:format' => sub {
     header('Access-Control-Allow-Headers' => 'content-type');
     
     status 'ok';

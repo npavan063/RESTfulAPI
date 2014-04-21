@@ -6,6 +6,7 @@ use Dancer::Plugin::Database;
 use Openponies::Entity::Place::Gateway;
 use Openponies::Entity::Place::Factory;
 use Openponies::Controller::Place;
+use Openponies::Service::Authorization;
 
 use Data::UUID::MT;
 
@@ -33,7 +34,7 @@ get '/all/all.:format' => sub {
 };
 
 post '/add.:format' => sub {
-    if (Openponies->checkLoggedIn() eq 1) {
+    if (Openponies::Service::Authorization->loggedInOrRedirect() eq 1) {
         my $name         = param('name');
         my $description  = param('description');
         
